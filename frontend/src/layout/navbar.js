@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Remove user from localStorage
+    setUser(null); // Update state
+    window.location.href = "/"; // Redirect to homepage
+  };
+
   return (
     <>
       <style>{`
@@ -162,7 +178,6 @@ const Navbar = () => {
                   Products
                 </a>
                 <ul className="dropdown-menu">
-                  {/* Supercharts with label */}
                   <li>
                     <a className="dropdown-item" href="/products/supercharts">
                       Supercharts
@@ -174,18 +189,11 @@ const Navbar = () => {
                         Portfolios
                       </a>
                     </li>
-
                     <span className="dropdown-label">Individual Tools</span>
                   </li>
 
-                  {/* Screeners with sub-options */}
                   <li className="dropdown-submenu">
-                    <a
-                      className="dropdown-item dropdown-toggle"
-                      // href="/products/screeners"
-                    >
-                      Screeners
-                    </a>
+                    <a className="dropdown-item dropdown-toggle">Screeners</a>
                     <ul className="dropdown-menu">
                       <li>
                         <a
@@ -222,7 +230,6 @@ const Navbar = () => {
                     </ul>
                   </li>
 
-                  {/* Calendars with sub-options */}
                   <li className="dropdown-submenu">
                     <a
                       className="dropdown-item dropdown-toggle"
@@ -258,7 +265,6 @@ const Navbar = () => {
                     </ul>
                   </li>
 
-                  {/* Remaining options */}
                   <li>
                     <a
                       className="dropdown-item"
@@ -327,13 +333,9 @@ const Navbar = () => {
                       Countries
                     </a>
                   </li>
-
-                  {/* Assets label */}
                   <li>
                     <span className="dropdown-label">Assets</span>
                   </li>
-
-                  {/* Assets options */}
                   <li>
                     <a className="dropdown-item" href="/markets/assets/indices">
                       Indices
@@ -359,8 +361,6 @@ const Navbar = () => {
                       Forex
                     </a>
                   </li>
-
-                  {/* Bonds with sub-sub-options */}
                   <li className="dropdown-submenu">
                     <a
                       className="dropdown-item dropdown-toggle"
@@ -387,7 +387,6 @@ const Navbar = () => {
                       </li>
                     </ul>
                   </li>
-
                   <li>
                     <a className="dropdown-item" href="/markets/assets/etfs">
                       ETFs
@@ -459,11 +458,81 @@ const Navbar = () => {
 
             {/* Right side button */}
             <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <a className="nav-link account-btn" href="/signup">
-                  Get Started
-                </a>
-              </li>
+              {!user ? (
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link account-btn dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Get Started
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a className="dropdown-item" href="/signup">
+                        Sign Up
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="/signin">
+                        Log In
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              ) : (
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link account-btn dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {user.username}
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a className="dropdown-item" href="/profile">
+                        Profile
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="/ideas/new">
+                        New Ideas
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="/hire-brokers">
+                        Hire Brokers
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="/community/join">
+                        Join Community
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="/learn">
+                        Learn
+                      </a>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item text-danger"
+                        onClick={handleLogout}
+                      >
+                        Log Out
+                      </button>
+                    </li>
+                  </ul>
+                </li>
+              )}
             </ul>
           </div>
         </div>

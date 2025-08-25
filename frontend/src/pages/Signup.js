@@ -6,8 +6,6 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
-    // assigning the state variable user
-    // user state will only now store the signup form fields in JSON format {key:val}
     name: "",
     username: "",
     email: "",
@@ -16,21 +14,50 @@ const SignUp = () => {
     type: "Basic",
   });
 
-  // creating the user object by putting the values 
+  const [error, setError] = useState(""); // Error message
+
   const { name, username, email, password, confirmPassword } = user;
 
   const onInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
+    setError(""); // Reset error on typing
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    try { // error handling
-      await axios.post("http://localhost:8080/user", user); // telling the axios to post the data (i.e. the user object) in the backend's provided route /user 
-      navigate("/"); // redirect to Homepage
-      //Backend saves it to DB (via UserController + UserRepository)
-    } catch (error) {
-      console.error("Error creating user:", error);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      // Fetch all users to check duplicates
+      const checkResponse = await axios.get(
+        "http://localhost:8080/admin/users"
+      );
+      const existingUsers = checkResponse.data;
+
+      const emailExists = existingUsers.some((u) => u.email === email);
+      const usernameExists = existingUsers.some((u) => u.username === username);
+
+      if (emailExists) {
+        setError("Email already exists");
+        return;
+      }
+      if (usernameExists) {
+        setError("Username already exists");
+        return;
+      }
+
+      // If everything is okay, create the user
+      await axios.post("http://localhost:8080/admin/user", user);
+
+      // Redirect to homepage after successful signup
+      navigate("/");
+    } catch (err) {
+      console.error("Error creating user:", err);
+      setError("Something went wrong. Please try again later.");
     }
   };
 
@@ -95,11 +122,19 @@ const SignUp = () => {
         .mb-4 {
           margin-bottom: 1.5rem !important;
         }
+        .error-message {
+          color: red;
+          font-size: 0.9rem;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
       `}</style>
 
       <div className="signup-container">
         <form onSubmit={onSubmit} className="signup-form">
           <h2>Create Account</h2>
+
+          {error && <div className="error-message">{error}</div>}
 
           <div className="mb-4">
             <label htmlFor="name" className="form-label">
@@ -189,13 +224,6 @@ const SignUp = () => {
           <div className="d-grid gap-2">
             <button type="submit" className="btn btn-primary">
               Sign Up
-            </button>
-            <button
-              type="button"
-              className="btn btn-link"
-              onClick={() => console.log("/signin")}
-            >
-              Already a member?
             </button>
           </div>
         </form>

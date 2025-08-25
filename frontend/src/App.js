@@ -21,6 +21,7 @@ import Portfolios from "./User/products/Portfolios";
 import Community from "./User/community/Community";
 import Newsflow from "./User/community/Newsflow";
 import Idea from "./User/community/Idea";
+import IdeaDesc from "./User/community/IdeaDesc";
 
 import Stocks from "./User/products/screeners/Stocks";
 import EFTs from "./User/products/screeners/EFTs";
@@ -32,6 +33,8 @@ import IPO from "./User/products/calendars/IPO";
 import Dividends from "./User/products/calendars/Dividends";
 
 import Users from "./Admin/Users";
+import SignIn from "./pages/Signin";
+import Profile from "./User/profile/Profile";
 
 function App() {
   return (
@@ -42,11 +45,13 @@ function App() {
           {/* Landing pages */}
           <Route exact path="/" element={<Home />} />
           <Route exact path="/signup" element={<SignUp />} />
+          <Route exact path="/signin" element={<SignIn />} />
           <Route
             exact
             path="/signup/emailverification"
             element={<EmailVerification />}
           />
+          <Route exact path="/profile" element={<Profile />} />
 
           {/* Products pages  */}
           <Route exact path="/products" element={<Products />} />
@@ -84,6 +89,7 @@ function App() {
           <Route exact path="/community" element={<Community />} />
           <Route exact path="/community/newsflow" element={<Newsflow />} />
           <Route exact path="/community/ideas" element={<Idea />} />
+          <Route exact path="/community/ideas/:id" element={<IdeaDesc />} />
 
           {/* Markets pages  */}
           {/* More pages */}
